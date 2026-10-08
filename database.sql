@@ -1,0 +1,28 @@
+CREATE DATABASE IF NOT EXISTS estatedesk CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE estatedesk;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('admin','agent') NOT NULL DEFAULT 'agent',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS properties (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL,
+  location VARCHAR(150) NOT NULL,
+  type ENUM('Apartment','Villa','Plot','Commercial') NOT NULL DEFAULT 'Apartment',
+  bedrooms TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  price DECIMAL(14,2) NOT NULL,
+  status ENUM('Available','Booked','Sold') NOT NULL DEFAULT 'Available',
+  description TEXT,
+  user_id INT UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_status (status),
+  INDEX idx_user (user_id),
+  CONSTRAINT fk_prop_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
